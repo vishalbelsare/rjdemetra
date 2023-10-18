@@ -75,18 +75,18 @@ save_workspace <- function(workspace, file) {
   if (length(grep("\\.xml$",file)) == 0)
     stop("The file must be a .xml !")
 
-  full_file_name <- normalizePath(file, winslash = "/", mustWork = FALSE)
-  folder_wk_name <- sub(".xml$","", full_file_name)
-  workspace_name <- basename(folder_wk_name)
-
+  full_file_name <- full_path(file)
 
   result <- .jcall(workspace, "Z", "save", full_file_name)
-  # To change the name of the workspace
-  wk_txt <- readLines(full_file_name)
-  wk_txt <- sub(folder_wk_name, workspace_name, wk_txt)
-  writeLines(wk_txt, full_file_name)
 
   invisible(result)
+}
+
+full_path <- function(path) {
+  base::file.path(
+    base::normalizePath(dirname(path), mustWork = TRUE, winslash = "/"),
+    base::basename(path),
+    fsep = "/")
 }
 
 
@@ -97,7 +97,7 @@ save_workspace <- function(workspace, file) {
 #' @param workspace the workspace to add the seasonally adjusted series to.
 #' @param multiprocessing the name or index of the multiprocessing to add the seasonally adjusted series to.
 #' @param sa_obj the seasonally adjusted object to add
-#' @param name the name of the seasonally adjustd series in the multiprocessing.
+#' @param name the name of the seasonally adjusted series in the multiprocessing.
 #' By default the name of the \code{sa_obj} is used.
 #'
 #' @seealso \code{\link{load_workspace}}, \code{\link{save_workspace}}
@@ -159,7 +159,7 @@ complete_dictionary <- function(workspace, sa_obj){
 complete_dictionary.SA <- function(workspace, sa_obj){
   userdef <- sa_obj$regarima$specification$regression$userdef
   ud_var <- userdef$variables
-  if (is.null(ud_var) || !userdef$specification["variables"] || is.na(ud_var$series))
+  if (is.null(ud_var) || !userdef$specification["variables"] || all(is.na(ud_var$series)))
     return(sa_obj)
 
   context_dictionary <- .jcall(workspace,"Lec/tstoolkit/algorithm/ProcessingContext;", "getContext")

@@ -20,8 +20,8 @@
 #' \code{load_spec} returns an object of class \code{"SA_spec"} or \code{"regarima_spec"}.
 
 #' @references
-#' Info on JDemetra+, usage and functions:
-#' \url{https://ec.europa.eu/eurostat/cros/content/documentation_en}
+#' More information and examples related to 'JDemetra+' features in the online documentation:
+#' \url{https://jdemetra-new-documentation.netlify.app/}
 #'
 #' @examples
 #' \donttest{
@@ -152,7 +152,7 @@ load_spec <- function (file = "spec.RData") {
   easter <- rbind(s.easter,rep(NA,length(s.easter)),s.easter)
   outliers <- rbind(s.outliers,rep(NA,length(s.outliers)),s.outliers)
   arima.dsc <- rbind(s.arima.dsc,rep(NA,length(s.arima.dsc)),s.arima.dsc)
-  forecast <- rbind(s.forecast,rep(NA,length(s.estimate)),s.forecast)
+  forecast <- rbind(s.forecast,rep(NA,length(s.forecast)),s.forecast)
 
   rownames(estimate)=c("Loaded","User_modif","Final")
   rownames(transform)=c("Loaded","User_modif","Final")

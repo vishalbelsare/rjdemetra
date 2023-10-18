@@ -2,7 +2,7 @@
 % Please edit documentation in R/tramoseats_spec.R
 \name{tramoseats_spec}
 \alias{tramoseats_spec}
-\title{TRAMO-SEATS model specification, SA/TRAMO-SEATS}
+\title{TRAMO-SEATS model specification}
 \usage{
 tramoseats_spec(
   spec = c("RSAfull", "RSA0", "RSA1", "RSA2", "RSA3", "RSA4", "RSA5"),
@@ -89,9 +89,14 @@ The default is \code{"RSAfull"}.}
 \item{preliminary.check}{a \code{logical} to check the quality of the input series and exclude highly problematic series
 e.g. the series with a number of identical observations and/or missing values above pre-specified threshold values.
 
-The time span of the series to be used for the estimation of the RegArima model coefficients is controlled by the following six variables: \code{estimate.from, estimate.to, estimate.first, estimate.last, estimate.exclFirst} and \code{estimate.exclLast}; where \code{estimate.from} and \code{estimate.to} have priority over remaining span control variables, \code{estimate.last} and \code{estimate.first} have priority over \code{estimate.exclFirst} and \code{estimate.exclLast}, and \code{estimate.last} has priority over \code{estimate.first}.}
+The time span of the series, which is the (sub)period used to estimate the regarima model, is controlled by the following six variables:
+\code{estimate.from, estimate.to, estimate.first, estimate.last, estimate.exclFirst} and \code{estimate.exclLast};
+where \code{estimate.from} and \code{estimate.to} have priority over the remaining span control variables,
+\code{estimate.last} and \code{estimate.first} have priority over \code{estimate.exclFirst} and \code{estimate.exclLast},
+and \code{estimate.last} has priority over \code{estimate.first}. Default= "All".}
 
-\item{estimate.from}{\code{character} in format "YYYY-MM-DD" indicating the start of the time span (e.g. "1900-01-01"). Can be combined with \code{estimate.to}.}
+\item{estimate.from}{a character in format "YYYY-MM-DD" indicating the start of the time span (e.g. "1900-01-01").
+It can be combined with the parameter \code{estimate.to}.}
 
 \item{estimate.to}{a \code{character} in format "YYYY-MM-DD" indicating the end of the time span (e.g. "2020-12-31").
 It can be combined with the parameter \code{estimate.from}.}
@@ -243,8 +248,8 @@ Control variables for the automatic modelling of the ARIMA model (\code{automdl.
 of the automatic model identification. If the Ljung-Box Q statistics for the residuals is acceptable, the default model is accepted
 and no further attempt will be made to identify another model.}
 
-\item{automdl.cancel}{\code{numeric}, the cancelation limit. If the difference in moduli of an AR and an MA roots (when estimating ARIMA(1,0,1)(1,0,1) models
-in the second step of the automatic identification of the differencing orders) is smaller than the cancelation limit, the two roots are assumed equal and cancel out.}
+\item{automdl.cancel}{\code{numeric}, the cancellation limit. If the difference in moduli of an AR and an MA roots (when estimating ARIMA(1,0,1)(1,0,1) models
+in the second step of the automatic identification of the differencing orders) is smaller than the cancellation limit, the two roots are assumed equal and canceled out.}
 
 \item{automdl.ub1}{\code{numeric}, the first unit root limit. It is the threshold value for the initial unit root test in the automatic differencing procedure.
 When one of the roots in the estimation of the ARIMA(2,0,0)(1,0,0) plus mean model, performed in the first step of the automatic model identification procedure,
@@ -252,7 +257,7 @@ is larger than first unit root limit in modulus, it is set equal to unity.}
 
 \item{automdl.ub2}{\code{numeric}, the second unit root limit. When one of the roots in the estimation of the ARIMA(1,0,1)(1,0,1) plus mean model,
 which is performed in the second step of the automatic model identification procedure, is larger than second unit root limit in modulus,
-it is checked if there is a common factor in the corresponding AR and MA polynomials of the ARMA model that can be cancelled (see \code{automdl.cancel}).
+it is checked if there is a common factor in the corresponding AR and MA polynomials of the ARMA model that can be canceled (see \code{automdl.cancel}).
 If there is no cancellation, the AR root is set equal to unity (i.e. the differencing order changes).}
 
 \item{automdl.armalimit}{\code{numeric}, the arma limit. It is the threshold value for t-statistics of ARMA coefficients and the constant term used
@@ -268,7 +273,7 @@ The reduced critical value will be set to (1-ReduceCV)xCV, where CV is the origi
 If the LjungBox Q statistics for the residuals of a final model is greater than Ljung Box limit, then the model is rejected, the outlier critical value is reduced,
 and model and outlier identification (if specified) is redone with a reduced value.}
 
-\item{automdl.compare}{\code{logical}. If {TRUE}, the program compares the model identified by the automatic procedure to the default model (ARIMA(0,1,1)(0,1,1))
+\item{automdl.compare}{\code{logical}. If \code{TRUE}, the program compares the model identified by the automatic procedure to the default model (ARIMA(0,1,1)(0,1,1))
 and the model with the best fit is selected. Criteria considered are residual diagnostics, the model structure and the number of outliers.
 
 Control variables for the non-automatic modelling of the ARIMA model (\code{automdl.enabled} is set to \code{FALSE}):}
@@ -293,7 +298,7 @@ and the number of provided coefficients matches the sum of (regular and seasonal
 
 \item{arima.coefEnabled}{\code{logical}. If \code{TRUE}, the program uses the user-defined ARMA coefficients.}
 
-\item{arima.coef}{a vector providing the coefficients for the regular and seasonal AR and MA polynominals.
+\item{arima.coef}{a vector providing the coefficients for the regular and seasonal AR and MA polynomials.
 The length of the vector must be equal to the sum of the regular and seasonal AR and MA orders. The coefficients shall be provided in the following order:
 regular AR (\emph{Phi} - \code{p} elements), regular MA  (\emph{Theta} - \code{q} elements), seasonal AR (\emph{BPhi} - \code{bp} elements)
 and seasonal MA (\emph{BTheta} - \code{bq} elements).
@@ -310,26 +315,26 @@ E.g.: \code{arima.coef = c(-0.8,-0.6,NA)}, \code{arima.coefType = c("Fixed","Fix
 \item{fcst.horizon}{\code{numeric}, the forecasting horizon. The length of the forecasts generated by the RegARIMA model
 in periods (positive values) or years (negative values). By default, the program generates two years forecasts (\code{fcst.horizon} set to \code{-2}).}
 
-\item{seats.predictionLength}{integer: the number of forecasts used in the decomposition. Negative values correspond to numbers of years.}
+\item{seats.predictionLength}{integer: the number of forecasts used in the decomposition. Negative values correspond to number of years. Default=-1.}
 
-\item{seats.approx}{character: the approximation mode. When the ARIMA model estimated by TRAMO does not accept an admissible decomposition, SEATS: \code{"None"} - performs an approximation; \code{"Legacy"} - replaces the model with a decomposable one; \code{"Noisy"} - estimates a new model by adding a white noise to the non-admissible model estimated by TRAMO.}
+\item{seats.approx}{character: the approximation mode. When the ARIMA model estimated by TRAMO does not accept an admissible decomposition, SEATS: \code{"None"} - performs an approximation; \code{"Legacy"} - replaces the model with a decomposable one; \code{"Noisy"} - estimates a new model by adding a white noise to the non-admissible model estimated by TRAMO. Default="Legacy".}
 
 \item{seats.trendBoundary}{numeric: the trend boundary. The boundary beyond which an AR root is integrated in the trend component.
 If the modulus of the inverse real root is greater than the trend boundary, the AR root is integrated in the trend component.
-Below this value, the root is integrated in the transitory component.}
+Below this value, the root is integrated in the transitory component. Possible values [0,1]. Default=0.5.}
 
-\item{seats.seasdBoundary}{numeric: the seasonal boundary. The boundary beyond which a negative AR root is integrated in the seasonal component.}
+\item{seats.seasdBoundary}{numeric: the seasonal boundary. The boundary beyond which a negative AR root is integrated in the seasonal component.  If the modulus of the inverse negative real root is greater (or equal) than Seasonal boundary, the AR root is integrated into the seasonal component. Otherwise the root is integrated into the trend or transitory component. Possible values [0,1]. Default=0.8.}
 
 \item{seats.seasdBoundary1}{numeric: the seasonal boundary (unique). The boundary beyond which a negative AR root is integrated
-in the seasonal component, when the root is the unique seasonal root.}
+in the seasonal component, when the root is the unique seasonal root. If the modulus of the inverse negative real root is greater (or equal) than Seasonal boundary, the AR root is integrated into the seasonal component. Otherwise the root is integrated into the trend or transitory component. Possible values [0,1]. Default=0.8.}
 
 \item{seats.seasTol}{numeric: the seasonal tolerance. The tolerance (measured in degrees) to allocate the AR non-real roots
 to the seasonal component (if the modulus of the inverse complex AR root is greater than the trend boundary
 and the frequency of this root differs from one of the seasonal frequencies by less than Seasonal tolerance)
-or the transitory component (otherwise).}
+or the transitory component (otherwise). Possible values in [0,10]. Default value 2.}
 
 \item{seats.maBoundary}{numeric: the MA unit root boundary. When the modulus of an estimated MA root falls in the range (xl, 1),
-it is set to xl.}
+it is set to xl. Possible values [0.9,1]. Default=0.95.}
 
 \item{seats.method}{character: the estimation method for the unobserved components. The choice can be made from:
 \itemize{
@@ -340,7 +345,7 @@ as it may become numerically unstable when some roots of the MA polynomial are n
 }}
 }
 \value{
-A two-elements list of class \code{c("SA_spec", "TRAMO_SEATS")}, containing:
+A two-element list of class \code{c("SA_spec", "TRAMO_SEATS")}, containing:
 (1) an object of class \code{c("regarima_spec", "TRAMO_SEATS")} with the RegARIMA model specification,
 (2) an object of class \code{c("seats_spec", "data.frame")} with the SEATS algorithm specification.
 Each component refers to a different part of the SA model specification, mirroring the arguments of the function
@@ -356,10 +361,10 @@ The final specification (third row) shall include user modifications (row two) u
 The pre-specified outliers, user-defined variables and pre-specified ARMA coefficients consist of a list of
 \code{Predefined} (base model specification) and \code{Final} values.
 
-\item{regarima}{an object of class \code{c("regarima_spec", "TRAMO_SEATS")}. See \emph{Value} of the function \code{\link{regarima_spec_tramoseats}}.}
+\item \code{regarima}: an object of class \code{c("regarima_spec", "TRAMO_SEATS")}. See \emph{Value} of the function \code{\link{regarima_spec_tramoseats}}.
 
-\item{seats}{a data.frame of class \code{c("seats_spec", "data.frame")}, containing the \emph{seats} variables in line with
-the names of the arguments variables. The final values can be also accessed with the function \code{\link{s_seats}}.}
+\item \code{seats}: a data.frame of class \code{c("seats_spec", "data.frame")}, containing the \emph{seats} variables in line with
+the names of the arguments variables. The final values can also be accessed with the function \code{\link{s_seats}}.
 }
 }
 \description{
@@ -447,11 +452,8 @@ s_arimaCoef(mysa8)
 }
 }
 \references{
-Info on 'JDemetra+', usage and functions:
-\url{https://ec.europa.eu/eurostat/cros/content/documentation_en}
-BOX G.E.P. and JENKINS G.M. (1970), "Time Series Analysis: Forecasting and Control", Holden-Day, San Francisco.
-
-BOX G.E.P., JENKINS G.M., REINSEL G.C. and LJUNG G.M. (2015), "Time Series Analysis: Forecasting and Control", John Wiley & Sons, Hoboken, N. J., 5th edition.
+More information and examples related to 'JDemetra+' features in the online documentation:
+\url{https://jdemetra-new-documentation.netlify.app/}
 }
 \seealso{
 \code{\link{tramoseats}}

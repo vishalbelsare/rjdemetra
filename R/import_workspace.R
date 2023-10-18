@@ -12,7 +12,7 @@ is.workspace <- function(x){
     inherits(x, "workspace")
 }
 
-#' Load a 'JDemetra+' workpace
+#' Load a 'JDemetra+' workspace
 #'
 #' Function to load a 'JDemetra+' workspace.
 #'
@@ -38,7 +38,9 @@ load_workspace <- function(file){
   if (!file.exists(file) | length(grep("\\.xml$",file)) == 0)
     stop("The file doesn't exist or isn't a .xml file !")
 
-  workspace <- .jcall("ec/tstoolkit/jdr/ws/Workspace", "Lec/tstoolkit/jdr/ws/Workspace;", "open", file)
+  full_file_name <- full_path(file)
+  workspace <- .jcall("ec/tstoolkit/jdr/ws/Workspace", "Lec/tstoolkit/jdr/ws/Workspace;", "open",
+                      full_file_name)
   workspace <- new("workspace", workspace)
   return(workspace)
 }
@@ -46,24 +48,24 @@ load_workspace <- function(file){
 
 #' Get objects inside a workspace or multiprocessing
 #'
-#' Generic functions to retreive all (\code{get_all_objects()}) \code{multiprocessing} (respectively \code{sa_item})
-#' from a \code{workspace} (respectively \code{multiprocessing}) or to retreive a single one (\code{get_object()}) .
+#' Generic functions to retrieve all (\code{get_all_objects()}) \code{multiprocessing} (respectively \code{sa_item})
+#' from a \code{workspace} (respectively \code{multiprocessing}) or to retrieve a single one (\code{get_object()}) .
 #'
-#' @param x the object to store the extracted \code{multiprocessing} or \code{sa_item}.
+#' @param x the object in which to store the extracted \code{multiprocessing} or \code{sa_item}.
 #' @param pos the index of the object to extract.
 #'
 #' @return An object of class \code{multiprocessing} or \code{sa_item} (for \code{get_object()}) or a list
 #' of objects of class \code{multiprocessing} or \code{sa_item} (for \code{get_all_objects()}).
 #'
-#' @seealso Other functions to retrieve informations from a workspace, multiprocessing or sa_item: \code{\link{count}}, \code{\link{get_model}}, \code{\link{get_name}}, \code{\link{get_ts}}.
+#' @seealso Other functions to retrieve information from a workspace, multiprocessing or sa_item: \code{\link{count}}, \code{\link{get_model}}, \code{\link{get_name}}, \code{\link{get_ts}}.
 #'
 #' @examples\donttest{
 #'
 #' sa_x13 <- x13(ipi_c_eu[, "FR"], spec = "RSA5c")
 #'
 #' wk <- new_workspace()
-#' mp <- new_multiprocessing(wk, "sa1")
-#' add_sa_item(wk, "sa1", sa_x13, "X13")
+#' mp <- new_multiprocessing(wk, "sap1")
+#' add_sa_item(wk, "sap1", sa_x13, "X13")
 #'
 #' # A way to retrieve the multiprocessing:
 #' mp <- get_object(wk, 1)
@@ -132,9 +134,9 @@ get_all_objects.workspace <- function(x){
 #' sa_ts <- tramoseats(ipi_c_eu[, "FR"], spec = spec_ts)
 #'
 #' wk <- new_workspace()
-#' mp <- new_multiprocessing(wk, "sa1")
-#' add_sa_item(wk, "sa1", sa_x13, "X13")
-#' add_sa_item(wk, "sa1", sa_ts, "TramoSeats")
+#' mp <- new_multiprocessing(wk, "sap1")
+#' add_sa_item(wk, "sap1", sa_x13, "X13")
+#' add_sa_item(wk, "sap1", sa_ts, "TramoSeats")
 #'
 #' sa_item1 <- get_object(mp, 1)
 #' sa_item2 <- get_object(mp, 2)
@@ -142,7 +144,7 @@ get_all_objects.workspace <- function(x){
 #' get_name(sa_item1) # returns "X13"
 #' get_name(sa_item2) # returns "TramoSeats"
 #'
-#' get_name(mp) # returns "sa1"
+#' get_name(mp) # returns "sap1"
 #'
 #' # To retrieve the name of every sa_item in a given multiprocessing:
 #' sapply(get_all_objects(mp), get_name)
@@ -173,6 +175,116 @@ get_name.sa_item <- function(x){
   return(name)
 }
 
+
+#' Get the Java name of all the contained object
+#'
+#' Generic functions to retrieve the Java name of the contained \code{multiprocessings} or the contained  \code{sa_items}.
+#'
+#' @param x An object containing other objects whose names we want to know
+#'
+#' @return A \code{character} vector containing all the names.
+#'
+#' @seealso Other functions to retrieve information from a workspace, multiprocessing or sa_item: \code{\link{get_name}}, \code{\link{get_position}}, \code{\link{count}}, \code{\link{get_model}}, \code{\link{get_ts}}.
+#'
+#' @examples \donttest{
+#' spec_x13 <- x13_spec(spec = "RSA5c", easter.enabled = FALSE)
+#' sa_x13 <- x13(ipi_c_eu[, "FR"], spec = spec_x13)
+#' spec_ts <- tramoseats_spec(spec = "RSA5")
+#' sa_ts <- tramoseats(ipi_c_eu[, "FR"], spec = spec_ts)
+#'
+#' wk <- new_workspace()
+#' mp <- new_multiprocessing(wk, "sap1")
+#' mp2 <- new_multiprocessing(wk, "sap2")
+#'
+#' get_all_names(wk)
+#'
+#' add_sa_item(wk, "sap1", sa_x13, "X13")
+#' add_sa_item(wk, "sap1", sa_ts, "TramoSeats")
+#'
+#' get_all_names(mp)
+#' }
+#'
+#' @export
+get_all_names <- function(x){
+  UseMethod("get_all_names", x)
+}
+#' @export
+get_all_names.workspace <- function(x){
+  saps <- get_all_objects(x)
+  names_saps <- names(saps)
+  return(names_saps)
+}
+#' @export
+get_all_names.multiprocessing <- function(x){
+  sa_items <- get_all_objects(x)
+  names_sa_items <- names(sa_items)
+  return(names_sa_items)
+}
+
+#' Get the position of an object
+#'
+#' Generic functions to retrieve the position of the contained \code{multiprocessings} or the contained  \code{sa_items}.
+#'
+#' @param x An object containing other objects whose names we want to know
+#' @param name a\code{character} specifiing an object
+#'
+#' @return A \code{integer}
+#'
+#' @seealso Other functions to retrieve information from a workspace, multiprocessing or sa_item: \code{\link{get_name}}, \code{\link{get_all_names}}, \code{\link{count}}, \code{\link{get_model}}, \code{\link{get_ts}}.
+#'
+#' @examples \donttest{
+#' spec_x13 <- x13_spec(spec = "RSA5c", easter.enabled = FALSE)
+#' sa_x13 <- x13(ipi_c_eu[, "FR"], spec = spec_x13)
+#' spec_ts <- tramoseats_spec(spec = "RSA5")
+#' sa_ts <- tramoseats(ipi_c_eu[, "FR"], spec = spec_ts)
+#'
+#' wk <- new_workspace()
+#' mp <- new_multiprocessing(wk, "sap1")
+#' mp2 <- new_multiprocessing(wk, "sap2")
+#'
+#' get_position(wk, "sap1")
+#' get_position(wk, "sap2")
+#'
+#' add_sa_item(wk, "sap1", sa_x13, "X13")
+#' add_sa_item(wk, "sap1", sa_ts, "TramoSeats")
+#'
+#' get_position(mp, "TramoSeats")
+#' get_position(mp, "X13")
+#' }
+#'
+#' @export
+get_position <- function(x, name){
+  UseMethod("get_position", x)
+}
+#' @export
+get_position.workspace <- function(x, name){
+  all_names <- get_all_names(x)
+  position <- which(all_names == name)
+  if (length(position) == 1L && position == 0L) {
+    warning("No SA-Processing have this name.")
+    return(0L)
+  } else if (length(position) > 1L) {
+    warning("Several SA-Processings have this name.")
+    return(position)
+  } else {
+    return(position)
+  }
+}
+#' @export
+get_position.multiprocessing <- function(x, name){
+  all_names <- get_all_names(x)
+  position <- which(all_names == name)
+  if (length(position) == 1L && position == 0L) {
+    warning("No SA-Item have this name.")
+    return(0L)
+  } else if (length(position) > 1L) {
+    warning("Several SA-Items have this name.")
+    return(position)
+  } else {
+    return(position)
+  }
+}
+
 #' Count the number of objects inside a workspace or multiprocessing
 #'
 #' Generic functions to count the number of \code{multiprocessing} (respectively \code{sa_item})
@@ -184,7 +296,7 @@ get_name.sa_item <- function(x){
 #'
 #' @examples
 #' wk <- new_workspace()
-#' mp <- new_multiprocessing(wk, "sa1")
+#' mp <- new_multiprocessing(wk, "sap1")
 #' count(wk) # 1 multiprocessing inside the workspace wk
 #' count(mp) # 0 sa_item inside the multiprocessing mp
 #'
@@ -223,8 +335,8 @@ count.workspace <- function(x){
 #' sa_x13 <- x13(ipi_c_eu[, "FR"], spec = "RSA5c")
 #'
 #' wk <- new_workspace()
-#' mp <- new_multiprocessing(wk, "sa1")
-#' add_sa_item(wk, "sa1", sa_x13, "X13")
+#' mp <- new_multiprocessing(wk, "sap1")
+#' add_sa_item(wk, "sap1", sa_x13, "X13")
 #' sa_item <- get_object(mp, 1)
 #'
 #'   # Extracting the raw time series from an adjusted series:
@@ -239,7 +351,7 @@ count.workspace <- function(x){
 #'
 #'
 #'   # Extracting all raw time series from a workspace:
-#' # Returns a list of length 1 named "sa1" containing a list
+#' # Returns a list of length 1 named "sap1" containing a list
 #' # of length 1 named "X13", containing the ts object ipi_c_eu[, "FR"]
 #' get_ts(wk)
 #' }
@@ -285,13 +397,13 @@ get_ts.regarima <- function(x){
 
 #' Compute a workspace multi-processing(s)
 #'
-#' Function to compute all the multi-processings or only a given one from a workspace.
+#' Function to compute all the multiprocessings or only a given one from a workspace.
 #' By default, the workspace only contains definitions: computation is needed to recalculate and access the adjusted model
 #' (with \code{\link{get_model}}).
 #'
 #' @param workspace the workspace to compute.
 #' @param i a \code{character} or \code{numeric} indicating the name or the index of the multiprocessing to compute.
-#' By default, all multi-processings are computed.
+#' By default, all multiprocessings are computed.
 #'
 #' @seealso \code{\link{get_model}}
 #'
@@ -301,8 +413,8 @@ get_ts.regarima <- function(x){
 #' sa_x13 <- x13(ipi_c_eu[, "FR"], spec = spec_x13)
 #'
 #' wk <- new_workspace()
-#' mp <- new_multiprocessing(wk, "sa1")
-#' add_sa_item(wk, "sa1", sa_x13, "X13")
+#' mp <- new_multiprocessing(wk, "sap1")
+#' add_sa_item(wk, "sap1", sa_x13, "X13")
 #' sa_item1 <- get_object(mp, 1)
 #'
 #' get_model(sa_item1, wk) # Returns NULL
@@ -346,7 +458,7 @@ compute <- function(workspace, i) {
 #' @param workspace the workspace object where models are stored. If \code{x} is a \code{workspace} object, this parameter is not used.
 #' @param userdefined a vector containing the names of additional output variables.
 #' (see \code{\link{x13}} or \code{\link{tramoseats}}).
-#' @param progress_bar boolean: if \code{TRUE}, a progress bar is printed.
+#' @param progress_bar Boolean: if \code{TRUE}, a progress bar is printed.
 #'
 #' @return \code{get_model()} returns a seasonally adjusted object (class \code{c("SA", "X13")} or \code{c("SA", "TRAMO_SEATS"}) or a list of seasonally adjusted objects:
 #' \itemize{
@@ -366,9 +478,9 @@ compute <- function(workspace, i) {
 #' sa_ts <- tramoseats(ipi_c_eu[, "FR"], spec = spec_ts)
 #'
 #' wk <- new_workspace()
-#' mp <- new_multiprocessing(wk, "sa1")
-#' add_sa_item(wk, "sa1", sa_x13, "X13")
-#' add_sa_item(wk, "sa1", sa_ts, "TramoSeats")
+#' mp <- new_multiprocessing(wk, "sap1")
+#' add_sa_item(wk, "sap1", sa_x13, "X13")
+#' add_sa_item(wk, "sap1", sa_ts, "TramoSeats")
 #'
 #' compute(wk) # It's important to compute the workspace before retrieving the SA model
 #' sa_item1 <- get_object(mp, 1)

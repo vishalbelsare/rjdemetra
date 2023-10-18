@@ -10,10 +10,10 @@ compute(workspace, i)
 \item{workspace}{the workspace to compute.}
 
 \item{i}{a \code{character} or \code{numeric} indicating the name or the index of the multiprocessing to compute.
-By default, all multi-processings are computed.}
+By default, all multiprocessings are computed.}
 }
 \description{
-Function to compute all the multi-processings or only a given one from a workspace.
+Function to compute all the multiprocessings or only a given one from a workspace.
 By default, the workspace only contains definitions: computation is needed to recalculate and access the adjusted model
 (with \code{\link{get_model}}).
 }
@@ -23,8 +23,8 @@ spec_x13 <- x13_spec(spec = "RSA5c", easter.enabled = FALSE)
 sa_x13 <- x13(ipi_c_eu[, "FR"], spec = spec_x13)
 
 wk <- new_workspace()
-mp <- new_multiprocessing(wk, "sa1")
-add_sa_item(wk, "sa1", sa_x13, "X13")
+mp <- new_multiprocessing(wk, "sap1")
+add_sa_item(wk, "sap1", sa_x13, "X13")
 sa_item1 <- get_object(mp, 1)
 
 get_model(sa_item1, wk) # Returns NULL

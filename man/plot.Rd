@@ -12,9 +12,9 @@
 \method{plot}{regarima}(
   x,
   which = 1:6,
-  caption = list("Residuals", "Histogram of residuals", "Normal Q-Q",
-    "ACF of residuals", "PACF of residuals", "Decomposition", list("Y linearised",
-    "Calendar effects", "Outliers effects"))[sort(which)],
+  caption = list("Residuals", "Histogram of residuals", "Normal Q-Q", "ACF of residuals",
+    "PACF of residuals", "Decomposition", list("Y linearised", "Calendar effects",
+    "Outliers effects"))[sort(which)],
   ask = prod(par("mfcol")) < length(which) && dev.interactive(),
   ...
 )
@@ -47,7 +47,7 @@
 
 \item{caption}{a string containing the graph title}
 
-\item{ask}{a boolean. If \code{TRUE}, the user will be prompted before a new graphical page is started.}
+\item{ask}{a Boolean. If \code{TRUE}, the user will be prompted before a new graphical page is started.}
 
 \item{...}{other parameters}
 
@@ -57,7 +57,7 @@
 
 \item{ylim}{the y limits of the plot.}
 
-\item{forecast}{a boolean indicating if forecasts should be included in the plot. If \code{TRUE}, the forecast is plotted.}
+\item{forecast}{a Boolean indicating if forecasts should be included in the plot. If \code{TRUE}, the forecast is plotted.}
 
 \item{type_chart}{a string indicating which type of chart to plot}
 }

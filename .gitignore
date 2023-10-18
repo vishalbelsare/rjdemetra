@@ -7,3 +7,8 @@ rjdemetra_perso.Rproj
 TODO.R
 cran-comments.md
 .DS_Store
+revdep
+docs/
+pkgdown/
+
+TO_DO
